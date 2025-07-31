@@ -14,8 +14,8 @@ const Sidebar = ({ setPage }) => {
 
     return (
         <div> 
-            <aside className=" w-44 min-h-[100vh] overflow-hidden bg-white hidden p-4 lg:block sticky top-0 left-0 shadow-lg">
-                <h1 className="mb-10 text-xl font-semibold">Admin Panel</h1>
+            <aside className=" w-44 min-h-[100vh] overflow-hidden bg-white hidden p-4 lg:block sticky top-0 left-0 border-r-[1px] border-gray-300">
+                <h1 className="mb-10 text-2xl font-semibold">Admin Panel</h1>
                 <ul className="list-none space-y-1">
                     <li onClick={() => { setPage('Pages'); navigate(''); }} className={`${active === "/" ? 'bg-gray-200 font-semibold' : 'bg-white hover:bg-gray-100'} cursor-pointer flex items-center gap-2 p-1 rounded-md`}><FaRegEdit /> Pages</li>
                     <li onClick={() => { setPage('Courses'); navigate('Courses') }} className={`${active === "/Courses" ? 'bg-gray-200 font-semibold' : 'bg-white hover:bg-gray-100'} flex items-center gap-2 cursor-pointer p-1 rounded-md`}><LuBookOpenText />Courses</li>

@@ -24,7 +24,7 @@ const Testimonials = () => {
   }
 
   return (
-    <div className='p-4 sm:p-8'>
+    <div className='p-0 sm:p-8'>
       <h1 className='text-3xl font-semibold text-center'>Add Testimonials</h1>
       <form onSubmit={handleSubmit} className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] mx-auto mt-10">
         <Input label="Student name" smallWidth={400} largeWidth={450} value={formValues.studentName} required name="studentName" onChange={handleInputChange} placeholder="Enter name" type="text" />
