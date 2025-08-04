@@ -26,7 +26,7 @@ const Navbar = ({ page,setPage }) => {
           <li onClick={() => { setPage('Training Info'); navigate('TrainingInfo'); setOpenSideNav(false); }} className={`${active === "/TrainingInfo" ? 'bg-gray-200 font-semibold' : 'bg-white hover:bg-gray-100'} items-center gap-2 flex cursor-pointer p-1 rounded-md`}><LuBadgeInfo />Training Info</li>
         </ul>
       </aside>
-      <nav className="border-l-[1px] border-b-[1px] border-gray-300 p-4 sticky top-0 bg-white flex items-center justify-between">
+      <nav className="border-b-[1px] border-gray-300 p-4 sticky top-0 bg-white flex items-center justify-between">
         <div className="flex items-center gap-4">
           <LuMenu onClick={()=>setOpenSideNav(true)} className="block lg:hidden" />
           <h1 className="text-xl">{page}</h1>

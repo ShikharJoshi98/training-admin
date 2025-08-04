@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Input from '../components/Input';
-import SubmitButton from './SubmitButton';
 import { detailForm, socialForm } from '../constants/companyDetails';
+import SubmitButton from '../components/SubmitButton';
 
 const TrainingInfo = () => {
   const [formValues, setFormValues] = useState({
@@ -70,18 +70,18 @@ const TrainingInfo = () => {
 
   return (
     <div className='p-0 sm:p-8'>
-      <h1 className='text-3xl xl:text-center font-semibold'>Company Details</h1>
-      <form onSubmit={handleSubmit} className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] mx-auto mt-10">
-          {detailForm.map((detail, index) =>
-              <Input label={detail.label} key={index} smallWidth={400} largeWidth={450} value={detail.type !== "file" ? formValues[detail.value] ?? "" : undefined} required={detail.required} name={detail.value} onChange={(e) => handleInputChange(e, "company")} placeholder={detail.placeholder} type={detail.type} />
-          )}
+      <h1 className='text-3xl mt-10 sm:mt-0 text-center font-semibold'>Company Details</h1>
+      <form onSubmit={handleSubmit} className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+        {detailForm.map((detail, index) =>
+          <Input label={detail.label} key={index} value={detail.type !== "file" ? formValues[detail.value] ?? "" : undefined} required={detail.required} name={detail.value} onChange={(e) => handleInputChange(e, "company")} placeholder={detail.placeholder} type={detail.type} />
+        )}
         <SubmitButton text="Submit" />
       </form>
-      <h1 className='text-3xl xl:text-center mt-12 font-semibold'>Social Links</h1>
-      <form onSubmit={socialFormSubmit} className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] mx-auto mt-10">
-          {socialForm.map((social, index) => (
-              <Input label={social.label} key={index} smallWidth={200} largeWidth={250} value={socialFormValues[social.value] ?? ""} name={social.value} onChange={(e) => handleInputChange(e, "social")} placeholder={social.placeholder} type={social.type} />
-          ))}
+      <h1 className='text-3xl text-center mt-12 font-semibold'>Social Links</h1>
+      <form onSubmit={socialFormSubmit} className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+        {socialForm.map((social, index) => (
+          <Input label={social.label} key={index} value={socialFormValues[social.value] ?? ""} name={social.value} onChange={(e) => handleInputChange(e, "social")} placeholder={social.placeholder} type={social.type} />
+        ))}
         <SubmitButton text="Submit" />
       </form>
     </div>

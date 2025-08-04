@@ -1,8 +1,93 @@
-import React from 'react'
+import { useState } from "react"
+import Input from "../components/Input";
+import SubmitButton from "../components/SubmitButton";
+import { CiCirclePlus } from "react-icons/ci";
+import TutorialModal from "../components/TutorialModal";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 const Tutorials = () => {
+  const [formValues, setFormValues] = useState({
+    section: "",
+    tutorials: "",
+    tutorialImage: null
+  });
+  const [editTutorialModal, setEditTutorialModal] = useState(false);
+  const [isAccordianOpen, setAccordianOpen] = useState(false);
+
+  const handleSubmit = (e) => {
+    try {
+      e.preventDefault();
+      console.log(formValues);
+      setFormValues({
+        section: "",
+        tutorials: "",
+        tutorialImage: null
+      })
+    } catch (error) {
+      console.warn(error.message);
+    }
+  }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+  const tutorialData = {
+    chapter: "Introduction to React",
+    subChapter: ["JSX Basics", "Components", "State and Props"]
+  };
+
   return (
-    <div>Tutorials</div>
+    <div className='p-0 sm:p-8'>
+      <h1 className='text-3xl mt-10 sm:mt-0 font-semibold text-center'>Add Tutorials</h1>
+      <form onSubmit={handleSubmit} className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+        <div className="flex flex-col gap-2">
+          <p>Tutorial Section</p>
+          <div className="flex flex-col sm:flex-row items-center gap-2">
+            <select onChange={handleInputChange} name="section" value={formValues.section} className="bg-white rounded-md border w-full sm:w-[90%] text-gray-600 py-1 px-2">
+              <option disabled value="">Select Section</option>
+              <option value="Option 1">Option 1</option>
+            </select>
+            <button type="button" className="bg-blue-500 p-2 whitespace-nowrap text-sm text-white cursor-pointer rounded-md hover:bg-blue-600">Add Section</button>
+          </div>
+        </div>
+        <Input label="Tutorial name" value={formValues.tutorials} required name="tutorials" onChange={handleInputChange} placeholder="Enter Tutorial" type="text" />
+        <Input label="Tutorial Logo" value={formValues.tutorialImage} required name="tutorials" onChange={handleInputChange} type="file" />
+        <SubmitButton text="Submit" />
+      </form>
+      <h1 className='text-3xl mt-10 font-semibold text-center'>Tutorials Added</h1>
+      <div className="bg-white py-8 px-5 md:px-10 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+        <div className='border-1 bg-gray-100 pb-4 shadow-md border-gray-400 rounded-2xl'>
+          <div className="flex flex-col sm:flex-row p-4 items-center sm:justify-between gap-10">
+            <div className="flex flex-col sm:flex-row sm:items-start items-center gap-4">
+              <img src="/61612b11c9d5ba04c453b7070ffa6d3a.png" alt="Tutorial Logo" className="w-20 h-20" />
+              <p className="font-semibold text-lg">Tutorial Name</p>
+            </div>
+            <div className="flex items-center gap-3 mt-3">
+              <button onClick={() => setEditTutorialModal(true)} className="bg-blue-500 text-white font-semibold h-fit w-fit hover:bg-blue-600 cursor-pointer flex items-center gap-3 py-2 pl-4 pr-2 rounded-full">
+                Update <CiCirclePlus size={30} />
+              </button>
+              <button onClick={() => setAccordianOpen((prev) => !prev)} className="ml-2 cursor-pointer">
+                {isAccordianOpen ? <IoIosArrowUp size={24} /> : <IoIosArrowDown size={24} />}
+              </button>
+            </div>
+          </div>
+          {isAccordianOpen && (
+            <div className="mt-4 ml-4 pl-4">
+              <p className="font-semibold text-lg text-blue-600">Chapter: {tutorialData.chapter}</p>
+              <ul className="list-disc ml-4 mt-2 text-gray-700">
+                {tutorialData.subChapter.map((sub, index) => (
+                  <li key={index} className="flex items-center gap-3 mt-2">{index + 1}. {sub} <button className="bg-blue-500 p-1 text-sm text-white cursor-pointer rounded-md hover:bg-blue-600">Add Documentation</button></li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+      {editTutorialModal && <TutorialModal onClose={() => setEditTutorialModal(false)} />}
+    </div>
   )
 }
 
