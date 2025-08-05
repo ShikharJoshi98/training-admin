@@ -3,16 +3,18 @@ import Input from "../components/Input";
 import SubmitButton from "../components/SubmitButton";
 import { CiCirclePlus } from "react-icons/ci";
 import TutorialModal from "../components/TutorialModal";
+import AddSectionModal from "../components/AddSectionModal";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 const Tutorials = () => {
   const [formValues, setFormValues] = useState({
     section: "",
-    tutorials: "",
+    tutorialName: "",
     tutorialImage: null
   });
   const [editTutorialModal, setEditTutorialModal] = useState(false);
   const [isAccordianOpen, setAccordianOpen] = useState(false);
+  const [addSectionModal, setAddSectionModal] = useState(false);
 
   const handleSubmit = (e) => {
     try {
@@ -20,7 +22,7 @@ const Tutorials = () => {
       console.log(formValues);
       setFormValues({
         section: "",
-        tutorials: "",
+        tutorialName: "",
         tutorialImage: null
       })
     } catch (error) {
@@ -50,10 +52,10 @@ const Tutorials = () => {
               <option disabled value="">Select Section</option>
               <option value="Option 1">Option 1</option>
             </select>
-            <button type="button" className="bg-blue-500 p-2 whitespace-nowrap text-sm text-white cursor-pointer rounded-md hover:bg-blue-600">Add Section</button>
+            <button onClick={() => setAddSectionModal(true)} type="button" className="bg-blue-500 p-2 whitespace-nowrap text-sm text-white cursor-pointer rounded-md hover:bg-blue-600">Add Section</button>
           </div>
         </div>
-        <Input label="Tutorial name" value={formValues.tutorials} required name="tutorials" onChange={handleInputChange} placeholder="Enter Tutorial" type="text" />
+        <Input label="Tutorial name" value={formValues.tutorialName} required name="tutorialName" onChange={handleInputChange} placeholder="Enter Tutorial" type="text" />
         <Input label="Tutorial Logo" value={formValues.tutorialImage} required name="tutorials" onChange={handleInputChange} type="file" />
         <SubmitButton text="Submit" />
       </form>
@@ -87,6 +89,7 @@ const Tutorials = () => {
         </div>
       </div>
       {editTutorialModal && <TutorialModal onClose={() => setEditTutorialModal(false)} />}
+      {addSectionModal && <AddSectionModal onClose={() => setAddSectionModal(false)} />}
     </div>
   )
 }
