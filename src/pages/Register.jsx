@@ -13,6 +13,7 @@ const Register = () => {
         address: ""
     });
     const [isConfirmPassword, setConfirmPassword] = useState("");
+    const [passwordMismatch, setPasswordMismatch] = useState(false);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -25,10 +26,11 @@ const Register = () => {
         try {
             e.preventDefault();
             if (formValues.password !== isConfirmPassword) {
-                console.log("Passwords do not match. Please try again.")
+                setPasswordMismatch(true);
                 return;
             }
             console.log(formValues);
+            setPasswordMismatch(false);
             setFormValues({
                 instituteName: "",
                 password: "",
@@ -64,6 +66,7 @@ const Register = () => {
                         <label htmlFor="confirm_password" className="text-white cursor-pointer">Show Password</label>
                     </div>
                 </div>
+                {passwordMismatch && <p className="text-center text-white text-sm">Passwords do not match. Please try again.</p>}
                 <button className="text-lg py-2 px-16 mx-auto rounded-4xl w-fit hover:bg-slate-400/30 font-semibold duration-300 bg-slate-500/30 border border-white/40 text-white cursor-pointer">Register</button>
             </form>
         </div>

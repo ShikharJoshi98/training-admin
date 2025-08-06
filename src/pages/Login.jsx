@@ -37,7 +37,7 @@ const Login = () => {
                     <input type="checkbox" onChange={() => setShowPassword(prev => !prev)} id="show_password" className="accent-gray-300" />
                     <label htmlFor="show_password" className="text-white cursor-pointer">Show Password</label>
                 </div>
-                <button className="text-lg py-2 px-16 w-fit mx-auto rounded-4xl hover:bg-slate-400/30 font-semibold duration-300 bg-slate-500/30 text-white cursor-pointer">Login</button>
+                <button className="text-lg py-2 px-16 border border-white/40 w-fit mx-auto rounded-4xl hover:bg-slate-400/30 font-semibold duration-300 bg-slate-500/30 text-white cursor-pointer">Login</button>
             </form>
         </div>
     )

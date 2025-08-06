@@ -70,15 +70,15 @@ const TrainingInfo = () => {
 
   return (
     <div className='p-0 sm:p-8'>
-      <h1 className='text-3xl mt-10 sm:mt-0 text-center font-semibold'>Company Details</h1>
-      <form onSubmit={handleSubmit} className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+      <h1 className='text-3xl text-white mt-10 sm:mt-0 text-center font-semibold'>Institute Details</h1>
+      <form onSubmit={handleSubmit} className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
         {detailForm.map((detail, index) =>
           <Input label={detail.label} key={index} value={detail.type !== "file" ? formValues[detail.value] ?? "" : undefined} required={detail.required} name={detail.value} onChange={(e) => handleInputChange(e, "company")} placeholder={detail.placeholder} type={detail.type} />
         )}
         <SubmitButton text="Submit" />
       </form>
-      <h1 className='text-3xl text-center mt-12 font-semibold'>Social Links</h1>
-      <form onSubmit={socialFormSubmit} className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+      <h1 className='text-3xl text-center text-white mt-12 font-semibold'>Social Links</h1>
+      <form onSubmit={socialFormSubmit} className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
         {socialForm.map((social, index) => (
           <Input label={social.label} key={index} value={socialFormValues[social.value] ?? ""} name={social.value} onChange={(e) => handleInputChange(e, "social")} placeholder={social.placeholder} type={social.type} />
         ))}

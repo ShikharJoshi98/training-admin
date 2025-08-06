@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import Navbar from '../components/Navbar'
 import { Outlet } from 'react-router-dom';
 
-const Dashboard = () => {
-  const [isPage, setPage] = useState('Pages');
+const DashboardLayout = () => {
+  const [isPage, setPage] = useState('');
   return (
     <div className='flex'>
       <Sidebar setPage={setPage} />
@@ -12,10 +12,10 @@ const Dashboard = () => {
         <Navbar page={isPage} setPage={setPage} />
         <div className=''>
           <Outlet />
-          </div>
+        </div>
       </div>
     </div>
   )
 }
 
-export default Dashboard
+export default DashboardLayout
