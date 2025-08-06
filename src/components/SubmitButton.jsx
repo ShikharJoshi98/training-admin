@@ -1,6 +1,6 @@
 const SubmitButton = ({ text, onClick }) => {
   return (
-    <button onClick={onClick} className='text-green-500 bg-green-900/40 backdrop-blur-sm hover:bg-green-900/70 duration-300 mt-8 cursor-pointer mx-auto block px-5 py-2 rounded-full border border-green-500'>{text}</button>
+    <button onClick={onClick} className='text-green-500 font-semibold bg-green-900/40 backdrop-blur-sm hover:bg-green-900/70 duration-300 mt-8 cursor-pointer mx-auto block px-5 py-2 rounded-full border border-green-500'>{text}</button>
   )
 }
 

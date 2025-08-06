@@ -69,7 +69,7 @@ const TrainingInfo = () => {
   }
 
   return (
-    <div className='p-0 sm:p-8'>
+    <div className='p-0 pb-10 sm:p-8'>
       <h1 className='text-3xl text-white mt-10 sm:mt-0 text-center font-semibold'>Institute Details</h1>
       <form onSubmit={handleSubmit} className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
         {detailForm.map((detail, index) =>
