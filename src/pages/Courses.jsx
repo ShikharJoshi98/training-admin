@@ -29,6 +29,7 @@ const Courses = () => {
   const courses = ['Web Development', 'Data Science', 'UI/UX Design', 'Cybersecurity', 'Digital Marketing'];
   const [isAccordianOpen, setAccordianOpen] = useState(false);
   const [selectedCourses, setSelectedCourses] = useState([]);
+  const [editTutorialModal, setEditTutorialModal] = useState(false);
 
   const handleCheckboxChange = (course) => {
     if (selectedCourses.includes(course)) {
@@ -73,16 +74,16 @@ const Courses = () => {
     }));
   };
   return (
-    <div className='p-0 sm:p-8'>
+    <div className='p-0 sm:p-8 text-white'>
       <h1 className='text-3xl mt-10 sm:mt-0 font-semibold text-center'>Courses Added</h1>
-      <div className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
-        <div className='border-1 bg-gray-100 pb-4 shadow-md border-gray-400 rounded-2xl'>
+      <div className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+        <div className='border-1 bg-white/10 pb-4 shadow-md border-gray-400 rounded-2xl'>
           <div className="flex flex-col sm:flex-row p-4 items-center sm:justify-between gap-10">
             <div className="flex flex-col sm:flex-row sm:items-start items-center gap-4">
               <p className="font-semibold text-lg">Tutorial Name</p>
             </div>
             <div className="flex items-center gap-3 mt-3">
-              <button onClick={() => setEditTutorialModal(true)} className="bg-blue-500 text-white font-semibold h-fit w-fit hover:bg-blue-600 cursor-pointer flex items-center gap-3 py-2 pl-4 pr-2 rounded-full">
+              <button onClick={() => setEditTutorialModal(true)} className="text-gray-200 bg-white/10 hover:bg-white/5 duration-300 border border-white/40 font-semibold h-fit w-fit cursor-pointer flex items-center gap-3 py-2 pl-4 pr-2 rounded-full">
                 Update <CiCirclePlus size={30} />
               </button>
               <button onClick={() => setAccordianOpen((prev) => !prev)} className="ml-2 cursor-pointer">
@@ -105,20 +106,20 @@ const Courses = () => {
       </div>
       <h1 className='text-3xl mt-10 font-semibold text-center'>Select Top 3 Courses</h1>
       <p className="text-sm mt-2 text-center">(To View on the landing page)</p>
-      <div className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+      <div className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
         {courses.map((course) => (
           <label key={course} className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" value={course} checked={selectedCourses.includes(course)} onChange={() => handleCheckboxChange(course)} disabled={!selectedCourses.includes(course) && selectedCourses.length >= 3} />
+            <input type="checkbox" value={course} checked={selectedCourses.includes(course)} onChange={() => handleCheckboxChange(course)} disabled={!selectedCourses.includes(course) && selectedCourses.length >= 3} className="accent-gray-300" />
             <span>{course}</span>
           </label>
         ))}
         {selectedCourses.length >= 3 && <SubmitButton onClick={handleSelectCourseSubmit} text="Courses Selected" />}
       </div>
       <h1 className='text-3xl mt-10 font-semibold text-center'>Add Upcoming Batches</h1>
-      <form onSubmit={handleUpcomingBatchSubmit} className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+      <form onSubmit={handleUpcomingBatchSubmit} className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
         <div className="flex flex-col gap-2">
           <p>Select Course</p>
-          <select onChange={handleUpcomingBatchChange} name="batch" value={upcomingBatchFormValues.batch} className="bg-white rounded-md border w-full text-gray-600 py-1 px-2" >
+          <select onChange={handleUpcomingBatchChange} name="batch" value={upcomingBatchFormValues.batch} className="bg-black/40 rounded-md border w-full text-white/80 py-1 px-2" >
             <option disabled value="">Select Course</option>
             <option value="Option 1">Option 1</option>
           </select>
@@ -127,7 +128,7 @@ const Courses = () => {
         <Input label="Course Timing" value={upcomingBatchFormValues.timing} required name="timing" onChange={handleUpcomingBatchChange} placeholder="Enter Course Timing (ex. 11:00 AM to 1:00 PM)" type="text" />
         <div className="flex flex-col gap-2">
           <p>Select Course Type</p>
-          <select onChange={handleUpcomingBatchChange} name="type" value={upcomingBatchFormValues.type} className="bg-white rounded-md border w-full text-gray-600 py-1 px-2" >
+          <select onChange={handleUpcomingBatchChange} name="type" value={upcomingBatchFormValues.type} className="bg-black/40 rounded-md border w-full text-white/80 py-1 px-2" >
             <option disabled value="">Select Type</option>
             <option value="Online">Online</option>
             <option value="Offline">Offline</option>
@@ -138,21 +139,21 @@ const Courses = () => {
         <SubmitButton text="Submit" />
       </form>
       <h1 className='text-3xl mt-10 font-semibold text-center'>Add Courses</h1>
-      <form onSubmit={handleSubmit} className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+      <form onSubmit={handleSubmit} className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
         <Input label="Course name" value={formValues.course} required name="course" onChange={handleInputChange} placeholder="Enter Course Name" type="text" />
         <Input label="Course duration" value={formValues.courseDuration} required name="courseDuration" onChange={handleInputChange} placeholder="Enter Course Duration (ex. 4 Months)" type="text" />
         <Input label="Post-Course Job Opportunities" value={formValues.jobOpportunities} required name="jobOpportunities" onChange={handleInputChange} placeholder="Enter Job Opportunities (ex. 50k+ job/internship opportunities)" type="text" />
         <div className="flex flex-col gap-2">
           <p>Add Course Information</p>
-          <textarea value={formValues.courseInfo} required name="courseInfo" onChange={handleInputChange} placeholder="Enter Course Information" className="bg-white rounded-md border h-[200px]  text-gray-600 py-1 px-2" type="text" ></textarea>
+          <textarea value={formValues.courseInfo} required name="courseInfo" onChange={handleInputChange} placeholder="Enter Course Information" className="bg-black/40 rounded-md border h-[200px]  text-white/80 py-1 px-2" type="text" ></textarea>
         </div>
         <SubmitButton text="Submit" />
       </form>
       <h1 className='text-3xl mt-10 font-semibold text-center'>Add Course Curriculum</h1>
-      <div className="bg-white py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+      <div className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
         <div className="flex flex-col gap-2">
           <p>Select Course</p>
-          <select onChange={(e) => setCurriculumValue(e.target.value)} name="course" value={curriculumValue} className="bg-white rounded-md border w-full text-gray-600 py-1 px-2" >
+          <select onChange={(e) => setCurriculumValue(e.target.value)} name="course" value={curriculumValue} className="bg-black/40 rounded-md border w-full text-white/80 py-1 px-2" >
             <option disabled value="">Select Course</option>
             <option value="Option 1">Option 1</option>
           </select>

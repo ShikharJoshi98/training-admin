@@ -6,7 +6,6 @@ export const detailForm = [
   { label: "Email*", value: "email", placeholder: "Enter Email", type: "email", required: true },
   { label: "Phone Number*", value: "phone", placeholder: "Enter Phone", type: "text", required: true },
   { label: "Alternate Phone Number (Optional)", value: "altPhone", placeholder: "Enter Alternate Phone Number", type: "text", required: false },
-  { label: "Address*", value: "address", placeholder: "Enter Address", type: "text", required: true }
 ];
 
 export const socialForm = [

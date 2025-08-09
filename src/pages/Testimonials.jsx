@@ -6,7 +6,7 @@ const Testimonials = () => {
   const [formValues, setFormValues] = useState({
     studentName: "",
     testimonial: "",
-    studentImage: null,
+    studentImage: "",
     newCompany: "",
     oldJobRole: "",
     newJobRole: "",
@@ -19,7 +19,7 @@ const Testimonials = () => {
       setFormValues({
         studentName: "",
         testimonial: "",
-        studentImage: null,
+        studentImage: "",
         newCompany: "",
         oldJobRole: "",
         newJobRole: "",

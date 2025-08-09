@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { FaAngleDoubleLeft, FaChalkboardTeacher, FaUsers } from "react-icons/fa";
 import { LuBadgeInfo, LuBookOpenText, LuLayoutDashboard, LuMenu } from "react-icons/lu"
 import { useLocation, useNavigate } from "react-router-dom";
+import authStore from "../store/authStore";
 
 const Navbar = () => {
+  const logout = authStore((state) => state.logout);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [active, setActive] = useState('/');
@@ -12,6 +14,12 @@ const Navbar = () => {
   useEffect(() => {
     setActive(pathname);
   }, [pathname])
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  }
+
   return (
     <>
       {openSideNav && (<div className="fixed inset-0 transition-opacity duration-300 bg-black/20 bg-opacity-50 z-10" onClick={() => setOpenSideNav(false)}></div>)}
@@ -31,7 +39,7 @@ const Navbar = () => {
           <LuMenu onClick={() => setOpenSideNav(true)} className="block lg:hidden" />
           <h1 className="text-xl">{active === "/dashboard" ? 'Dashboard' : active === "/dashboard/Courses" ? 'Courses' : active === "/dashboard/Tutorials" ? 'Tutorials' : active === "/dashboard/Testimonials" ? 'Testimonials' : active === "/dashboard/TrainingInfo" ? 'Institute Details' : ''}</h1>
         </div>
-        <p className="text-red-400 rounded-full font-semibold py-2 px-5 cursor-pointer bg-red-900/40 backdrop-blur-sm hover:bg-red-900/70 border border-red-500 duration-300">Logout</p>
+        <button onClick={handleLogout} className="text-red-400 rounded-full font-semibold py-2 px-5 cursor-pointer bg-red-900/40 backdrop-blur-sm hover:bg-red-900/70 border-2 border-red-500 duration-300">Logout</button>
       </nav>
     </>
   )

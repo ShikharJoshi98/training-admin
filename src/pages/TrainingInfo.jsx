@@ -6,7 +6,7 @@ import SubmitButton from '../components/SubmitButton';
 const TrainingInfo = () => {
   const [formValues, setFormValues] = useState({
     name: "",
-    logo: null,
+    logo: "",
     email: "",
     phone: "",
     altPhone: "",
@@ -26,7 +26,7 @@ const TrainingInfo = () => {
       console.log(formValues);
       setFormValues({
         name: "",
-        logo: null,
+        logo: "",
         email: "",
         phone: "",
         altPhone: "",
@@ -75,7 +75,7 @@ const TrainingInfo = () => {
         {detailForm.map((detail, index) =>
           <Input label={detail.label} key={index} value={detail.type !== "file" ? formValues[detail.value] ?? "" : undefined} required={detail.required} name={detail.value} onChange={(e) => handleInputChange(e, "company")} placeholder={detail.placeholder} type={detail.type} />
         )}
-        <SubmitButton text="Submit" />
+        <SubmitButton text="Update" />
       </form>
       <h1 className='text-3xl text-center text-white mt-12 font-semibold'>Social Links</h1>
       <form onSubmit={socialFormSubmit} className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">

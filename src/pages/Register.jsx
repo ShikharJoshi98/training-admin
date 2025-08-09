@@ -1,9 +1,13 @@
 import { useState } from "react";
 import Input from "../components/Input";
+import authStore from "../store/authStore";
+import RegisteredModal from "../components/RegisteredModal";
 
 const Register = () => {
+    const { registerInstitute, isInstituteRegistered } = authStore();
     const [isShowPassword, setShowPassword] = useState(false);
     const [isConfirmShowPassword, setConfirmShowPassword] = useState(false);
+    const [isRegisterModal, setRegisterModal] = useState(false);
     const [formValues, setFormValues] = useState({
         instituteName: "",
         password: "",
@@ -22,14 +26,15 @@ const Register = () => {
             [name]: value
         }))
     }
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         try {
             e.preventDefault();
             if (formValues.password !== isConfirmPassword) {
                 setPasswordMismatch(true);
                 return;
             }
-            console.log(formValues);
+            await registerInstitute(formValues);
+            setRegisterModal(true);
             setPasswordMismatch(false);
             setFormValues({
                 instituteName: "",
@@ -45,7 +50,7 @@ const Register = () => {
         }
     }
     return (
-        <div className="bg-black/30 w-[90vw] max-w-xl mx-auto mt-16 backdrop-blur-sm rounded-xl p-6 border border-white/20 shadow-lg">
+        <div className="bg-black/30 w-[90vw] max-w-xl mx-auto mt-16 rounded-xl p-6 border border-white/20 shadow-lg">
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                 <Input label="Institute Name*" value={formValues.instituteName} required placeholder="Enter Institute name" onChange={handleInputChange} name="instituteName" />
                 <Input label="Institute Email*" value={formValues.email} required placeholder="Enter Institute email" onChange={handleInputChange} name="email" type="email" />
@@ -69,6 +74,7 @@ const Register = () => {
                 {passwordMismatch && <p className="text-center text-white text-sm">Passwords do not match. Please try again.</p>}
                 <button className="text-lg py-2 px-16 mx-auto rounded-4xl w-fit hover:bg-slate-400/30 font-semibold duration-300 bg-slate-500/30 border border-white/40 text-white cursor-pointer">Register</button>
             </form>
+            {isRegisterModal && <RegisteredModal onClose={() => setRegisterModal(false)} message={isInstituteRegistered} />}
         </div>
     )
 }

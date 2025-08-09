@@ -54,10 +54,10 @@ const AddCurriculumModal = ({ onClose, curriculum }) => {
     }
     return (
         <div className="bg-black/50 z-60 fixed inset-0 flex items-center justify-center p-2">
-            <div className="bg-white max-h-[90vh] max-w-[90vw] overflow-y-auto flex flex-col w-full rounded-xl p-4 shadow-lg">
+            <div className="bg-slate-700 max-h-[90vh] max-w-[90vw] overflow-y-auto flex flex-col w-full rounded-xl p-4 shadow-lg">
                 <button onClick={onClose} className="place-self-end cursor-pointer transition-all duration-300 hover:text-white hover:bg-red-500 rounded-md p-1"><RxCross2 size={24} /></button>
                 <h1 className='text-3xl font-semibold text-center'>Add {curriculum} Content</h1>
-                <form onSubmit={handleSubmit} className="px-40 mt-10 flex flex-col gap-4">
+                <form onSubmit={handleSubmit} className="sm:px-40 mt-10 flex flex-col gap-4">
                     <Input label="Add Title" value={formValues.title} required name="title" onChange={handleInputChange} placeholder="Enter Title Name" type="text" />
                     <Input label="Add Add-on" value={formValues.addOn} required name="addOn" onChange={handleInputChange} placeholder="Enter Add-on" type="text" />
                     <div className="flex flex-col gap-2">
@@ -65,7 +65,7 @@ const AddCurriculumModal = ({ onClose, curriculum }) => {
                         {
                             formValues.subChapter.map((sub, index) => (
                                 <div key={index} className="flex items-center gap-2">
-                                    <input value={sub} required onChange={(e) => handleSubChapterChange(index, e.target.value)} placeholder="Enter Topic" type="text" className="bg-white rounded-md border text-gray-600 w-[95%] py-1 px-2" />
+                                    <input value={sub} required onChange={(e) => handleSubChapterChange(index, e.target.value)} placeholder="Enter Topic" type="text" className="bg-black/40 rounded-md border text-white/80 w-[95%] py-1 px-2" />
                                     <button onClick={() => deleteSubChapter(index)} type="button" className="p-2 w-10 cursor-pointer hover:bg-red-600 font-semibold h-10 rounded-full bg-red-500 text-white flex items-center justify-center"><CiCircleMinus size={25} /></button>
                                 </div>
                             ))

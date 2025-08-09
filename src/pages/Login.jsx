@@ -1,12 +1,24 @@
 import Input from "../components/Input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import authStore from "../store/authStore";
+import { useNavigate } from "react-router-dom";
+import { LuLoaderCircle } from "react-icons/lu";
 
 const Login = () => {
+    const { login } = authStore();
+    const authStatus = authStore((state) => state);
+    const navigate = useNavigate();
     const [isShowPassword, setShowPassword] = useState(false);
     const [formValues, setFormValues] = useState({
         instituteName: "",
         password: ""
     });
+
+    useEffect(() => {
+        if (authStatus.isAuthenticated) {
+            navigate("/dashboard");
+        }
+    }, [authStatus.isAuthenticated, navigate]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -15,10 +27,11 @@ const Login = () => {
             [name]: value
         }))
     }
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         try {
             e.preventDefault();
-            console.log(formValues);
+            await login(formValues);
             setFormValues({
                 instituteName: "",
                 password: ""
@@ -37,7 +50,7 @@ const Login = () => {
                     <input type="checkbox" onChange={() => setShowPassword(prev => !prev)} id="show_password" className="accent-gray-300" />
                     <label htmlFor="show_password" className="text-white cursor-pointer">Show Password</label>
                 </div>
-                <button className="text-lg py-2 px-16 border border-white/40 w-fit mx-auto rounded-4xl hover:bg-slate-400/30 font-semibold duration-300 bg-slate-500/30 text-white cursor-pointer">Login</button>
+                <button className="text-lg py-2 px-16 border border-white/40 w-fit mx-auto rounded-4xl hover:bg-slate-400/30 font-semibold duration-300 bg-slate-500/30 text-white cursor-pointer">{authStatus.isLoading ? <LuLoaderCircle className="mx-auto animate-spin" /> : 'Login'}</button>
             </form>
         </div>
     )
