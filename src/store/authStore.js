@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export const BACKEND_URL = `${import.meta.env.VITE_BACKEND_URL}/api/admin-auth`;
+export const AUTH_BACKEND_URL = `${import.meta.env.VITE_BACKEND_URL}/api/admin-auth`;
 
 const authStore = create((set) => ({
     isInstituteRegistered: "",
@@ -10,7 +10,7 @@ const authStore = create((set) => ({
     institute: null,
     registerInstitute: async (data) => {
         try {
-            const response = await fetch(`${BACKEND_URL}/registerInstitute`, {
+            const response = await fetch(`${AUTH_BACKEND_URL}/registerInstitute`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -27,7 +27,7 @@ const authStore = create((set) => ({
     login: async (data) => {
         set({ isLoading: true });
         try {
-            const response = await fetch(`${BACKEND_URL}/login`, {
+            const response = await fetch(`${AUTH_BACKEND_URL}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: "include",
@@ -47,7 +47,7 @@ const authStore = create((set) => ({
     checkAuth: async () => {
         set({ isCheckingAuth: true, isLoading: true });
         try {
-            const response = await fetch(`${BACKEND_URL}/check-auth`, {
+            const response = await fetch(`${AUTH_BACKEND_URL}/check-auth`, {
                 method: 'GET',
                 credentials: "include"
             });
@@ -75,7 +75,7 @@ const authStore = create((set) => ({
     logout: async () => {
         set({ isLoading: true });
         try {
-            const response = await fetch(`${BACKEND_URL}/logout`, {
+            const response = await fetch(`${AUTH_BACKEND_URL}/logout`, {
                 method: 'POST',
                 credentials: "include"
             });

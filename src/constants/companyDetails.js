@@ -2,7 +2,7 @@ export const detailForm = [
   { label: "Company Name*", value: "name", placeholder: "Enter Name", type: "text", required: true },
   { label: "Company Abbreviation (Optional)", value: "abbv", placeholder: "Enter Abbreviation", type: "text", required: false },
   { label: "Address*", value: "address", placeholder: "Enter Address", type: "text", required: true },
-  { label: "Logo*", value: "logo", placeholder: "", type: "file", required: false },
+  { label: "Logo", value: "logo", placeholder: "", type: "file", required: false },
   { label: "Email*", value: "email", placeholder: "Enter Email", type: "email", required: true },
   { label: "Phone Number*", value: "phone", placeholder: "Enter Phone", type: "text", required: true },
   { label: "Alternate Phone Number (Optional)", value: "altPhone", placeholder: "Enter Alternate Phone Number", type: "text", required: false },

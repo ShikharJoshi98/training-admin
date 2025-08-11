@@ -2,14 +2,18 @@ import { RxCross2 } from "react-icons/rx"
 import Input from "./Input"
 import { useState } from "react"
 import SubmitButton from "./SubmitButton";
+import authStore from "../store/authStore";
+import adminStore from "../store/adminStore";
 
 const AddSectionModal = ({ onClose }) => {
     const [sectionName, setSectionName] = useState("");
+    const institute = authStore((state) => state.institute);
+    const addTutorialSection = adminStore((state) => state.addTutorialSection);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         try {
             e.preventDefault();
-            console.log(sectionName);
+            await addTutorialSection({ sectionName, instituteId: institute?.id });
             setSectionName("");
         } catch (error) {
             console.warn(error.message);

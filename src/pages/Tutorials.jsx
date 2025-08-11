@@ -1,45 +1,91 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Input from "../components/Input";
 import SubmitButton from "../components/SubmitButton";
-import { CiCirclePlus } from "react-icons/ci";
-import TutorialModal from "../components/TutorialModal";
 import AddSectionModal from "../components/AddSectionModal";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import adminStore from "../store/adminStore";
+import authStore from "../store/authStore";
+import { CiCirclePlus } from "react-icons/ci";
+import AddChapterModal from "../components/AddChapterModal";
+import AddSubChapterModal from "../components/AddSubChapterModal";
 
 const Tutorials = () => {
+  const getTutorialSections = adminStore((state) => state.getTutorialSections);
+  const tutorialSections = adminStore((state) => state.tutorialSections);
+  const isUploadSection = adminStore((state) => state.isUploadSection);
+  const addTutorials = adminStore((state) => state.addTutorials);
+  const getTutorials = adminStore((state) => state.getTutorials);
+  const tutorials = adminStore((state) => state.tutorials);
+  const getTutorialChapter = adminStore((state) => state.getTutorialChapter);
+  const tutorialChapters = adminStore((state) => state.tutorialChapters);
+  const addChapterSubmit = adminStore((state) => state.addChapterSubmit);
+  const addSubChapterSubmit = adminStore((state) => state.addSubChapterSubmit);
+  const institute = authStore((state) => state.institute);
   const [formValues, setFormValues] = useState({
     section: "",
     tutorialName: "",
     tutorialImage: ""
   });
-  const [editTutorialModal, setEditTutorialModal] = useState(false);
-  const [isAccordianOpen, setAccordianOpen] = useState(false);
+  const [isTutorialId, setTutorialId] = useState(null);
+  const [addChapterModal, setAddChapterModal] = useState(false);
   const [addSectionModal, setAddSectionModal] = useState(false);
+  const [addSubChapterModal, setAddSubChapterModal] = useState(false);
+  const [isChapterId, setChapterId] = useState(null);
+  const [tutorialSubmit, setTutorialSubmit] = useState(false);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    getTutorialSections(institute?.id);
+    getTutorials(institute?.id);
+    getTutorialChapter(institute?.id);
+  },
+    [
+      getTutorialSections,
+      isUploadSection,
+      getTutorials,
+      getTutorialChapter,
+      tutorialSubmit,
+      addChapterSubmit,
+      addSubChapterSubmit
+    ]
+  );
+
+  const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      console.log(formValues);
+      await addTutorials({ ...formValues, instituteId: institute?.id });
       setFormValues({
         section: "",
         tutorialName: "",
         tutorialImage: ""
       })
+      setTutorialSubmit(prev => !prev);
     } catch (error) {
       console.warn(error.message);
     }
   }
+
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prev) => ({
-      ...prev,
-      [name]: value
-    }))
+    const { name, value, files } = e.target;
+
+    if (name === "tutorialImage" && files && files.length > 0) {
+      const file = files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        setFormValues((prev) => ({
+          ...prev,
+          tutorialImage: base64String
+        }));
+      };
+
+      reader.readAsDataURL(file);
+    } else {
+      setFormValues((prev) => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   }
-  const tutorialData = {
-    chapter: "Introduction to React",
-    subChapter: ["JSX Basics", "Components", "State and Props"]
-  };
 
   return (
     <div className='p-0 pb-10 sm:p-8'>
@@ -50,46 +96,49 @@ const Tutorials = () => {
           <div className="flex flex-col sm:flex-row items-center gap-2">
             <select onChange={handleInputChange} name="section" value={formValues.section} className="bg-black/40 border text-white/80 rounded-md w-full sm:w-[90%] py-1 px-2">
               <option disabled value="">Select Section</option>
-              <option value="Option 1">Option 1</option>
+              {
+                tutorialSections.map((section, index) => (
+                  <option key={index} value={section?.sectionName}>{section?.sectionName}</option>
+                ))
+              }
             </select>
             <button onClick={() => setAddSectionModal(true)} type="button" className="text-gray-200 bg-white/10 hover:bg-white/5 duration-300 py-1 px-2 whitespace-nowrap text-sm border border-white/30 cursor-pointer rounded-md">Add Section</button>
           </div>
         </div>
         <Input label="Tutorial name" value={formValues.tutorialName} required name="tutorialName" onChange={handleInputChange} placeholder="Enter Tutorial" type="text" />
-        <Input label="Tutorial Logo" value={formValues.tutorialImage} required name="tutorials" onChange={handleInputChange} type="file" />
+        <Input label="Tutorial Logo" required name="tutorialImage" onChange={handleInputChange} type="file" />
         <SubmitButton text="Submit" />
       </form>
       <h1 className='text-3xl text-white mt-10 font-semibold text-center'>Tutorials Added</h1>
-      <div className="bg-white/10 py-8 px-5 md:px-10 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
-        <div className='border bg-white/10 pb-4 shadow-md border-white/10 rounded-2xl'>
-          <div className="flex flex-col sm:flex-row p-4 items-center sm:justify-between gap-10">
-            <div className="flex flex-col sm:flex-row sm:items-start items-center gap-4">
-              <img src="/61612b11c9d5ba04c453b7070ffa6d3a.png" alt="Tutorial Logo" className="w-20 h-20" />
-              <p className="font-semibold text-gray-200 text-lg">Tutorial Name</p>
+      {tutorials.map((tutorial, index) => (
+        <div key={index} className="bg-white/10 py-8 px-5 md:px-10 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+          <div className='border bg-white/10 pb-4 shadow-md border-white/10 rounded-2xl'>
+            <div className="flex flex-col sm:flex-row p-4 items-center sm:justify-between gap-10">
+              <div className="flex flex-col sm:flex-row sm:items-start items-center gap-4">
+                <img src={tutorial?.tutorialImage} alt="Tutorial Logo" className="w-20 h-20" />
+                <p className="font-semibold text-gray-200 text-lg">{tutorial?.tutorialName}</p>
+                <p className="text-gray-400 text-sm mt-1">({tutorial?.section})</p>
+              </div>
             </div>
-            <div className="flex items-center gap-3 mt-3">
-              <button onClick={() => setEditTutorialModal(true)} className="text-gray-200 bg-white/10 hover:bg-white/5 duration-300 border border-white/40 font-semibold h-fit w-fit cursor-pointer flex items-center gap-3 py-2 pl-4 pr-2 rounded-full">
-                Update <CiCirclePlus size={30} />
-              </button>
-              <button onClick={() => setAccordianOpen((prev) => !prev)} className="ml-2 text-white cursor-pointer">
-                {isAccordianOpen ? <IoIosArrowUp size={24} /> : <IoIosArrowDown size={24} />}
-              </button>
-            </div>
+            {
+              tutorialChapters.filter((chapter) => chapter?.tutorialId === tutorial?.id).map((chapter, index) => (
+                <div key={index} className="mt-4 text-gray-200">
+                  <p className="pl-5 font-semibold">{chapter?.chapter}<button onClick={() => { setAddSubChapterModal(true); setChapterId(chapter?.id) }} className="bg-sky-700 text-white p-2 ml-2 cursor-pointer rounded-full text-sm">Add Subchapter</button></p>
+                  {
+                    chapter?.subChapter.map((item, subIndex) => (
+                      <p key={subIndex} className="pl-10 text-sm mt-1">{subIndex + 1}. {item} <button className="bg-blue-400 text-white cursor-pointer py-0.5 px-3 rounded-full">Add Documentation</button></p>
+                    ))
+                  }
+                </div>
+              ))
+            }
+            <button onClick={() => { setAddChapterModal(true); setTutorialId(tutorial?.id) }} className="bg-green-600 mx-auto mt-4 text-white cursor-pointer flex items-center gap-3 py-2 pl-3 pr-1 font-semibold rounded-full">Add Chapter<CiCirclePlus size={20} /></button>
           </div>
-          {isAccordianOpen && (
-            <div className="mt-4 text-gray-300 ml-4 pl-4">
-              <p className="font-semibold text-lg">Chapter: {tutorialData.chapter}</p>
-              <ul className="list-disc ml-4 mt-2">
-                {tutorialData.subChapter.map((sub, index) => (
-                  <li key={index} className="flex items-center gap-3 mt-2">{index + 1}. {sub} <button className="text-gray-200 bg-white/10 hover:bg-white/5 duration-300 border border-white/40 p-1 text-sm cursor-pointer rounded-md">Add Documentation</button></li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
-      </div>
-      {editTutorialModal && <TutorialModal onClose={() => setEditTutorialModal(false)} />}
+      ))}
+      {addChapterModal && <AddChapterModal onClose={() => setAddChapterModal(false)} tutorialid={isTutorialId} />}
       {addSectionModal && <AddSectionModal onClose={() => setAddSectionModal(false)} />}
+      {addSubChapterModal && <AddSubChapterModal onClose={() => setAddSubChapterModal(false)} chapterId={isChapterId} />}
     </div>
   )
 }
