@@ -9,27 +9,25 @@ import AuthLayout from "./Layout/AuthLayout";
 import DashboardLayout from "./Layout/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import authStore from "./store/authStore";
-import { Children, useEffect } from "react";
+import { useEffect } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = authStore((state) => state.isAuthenticated);
-  const isCheckingAuth = authStore((state) => state.isCheckingAuth);
 
-  if (isCheckingAuth) return <LoadingSpinner />;
-
-  if (!isAuthenticated) return <Navigate to="/" replace />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   return children;
 };
 
 const RedirectAuthenticatedUser = ({ children }) => {
   const isAuthenticated = authStore((state) => state.isAuthenticated);
-  const isCheckingAuth = authStore((state) => state.isCheckingAuth);
 
-  if (isCheckingAuth) return <LoadingSpinner />;
-
-  if (isAuthenticated) return <Navigate to="/dashboard" replace />;
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />
+  };
 
   return children;
 };
@@ -50,10 +48,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<AuthLayout />} >
-          <Route path="" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} />
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<RedirectAuthenticatedUser><Login /></RedirectAuthenticatedUser>} />
           <Route path="/register" element={<RedirectAuthenticatedUser><Register /></RedirectAuthenticatedUser>} />
         </Route>
+
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="Courses" element={<ProtectedRoute><Courses /></ProtectedRoute>} />
@@ -61,6 +60,7 @@ function App() {
           <Route path="TrainingInfo" element={<ProtectedRoute><TrainingInfo /></ProtectedRoute>} />
           <Route path="Tutorials" element={<ProtectedRoute><Tutorials /></ProtectedRoute>} />
         </Route>
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );

@@ -9,14 +9,18 @@ const adminStore = create((set) => ({
     tutorialSections: [],
     tutorials: [],
     tutorialChapters: [],
+    courses:[],
     isUpdateLoading: false,
     isAddSocialLinkLoading: false,
     isTestimonialAddedLoading: false,
     isUploadSection: false,
     addTutorialLoader: false,
     addChapterLoader: false,
+    addCourseLoader: false,
     addChapterSubmit: false,
     addSubChapterSubmit: false,
+    addUpcomingBatchLoader: false,
+    addCourseTopicLoader:false,
     setAddChapterSubmit: () => set((state) => ({ addChapterSubmit: !state.addChapterSubmit })),
     setAddSubChapterSubmit: () => set((state) => ({ addSubChapterSubmit: !state.addSubChapterSubmit })),
     getInstituteData: async (id) => {
@@ -38,6 +42,8 @@ const adminStore = create((set) => ({
                 },
                 body: JSON.stringify(data)
             })
+            await new Promise(resolve => setTimeout(resolve, 200));
+
             set({ isUpdateLoading: false });
         } catch (error) {
             console.warn(error.message);
@@ -54,6 +60,8 @@ const adminStore = create((set) => ({
                 },
                 body: JSON.stringify(data)
             });
+            await new Promise(resolve => setTimeout(resolve, 200));
+
             set({ isAddSocialLinkLoading: false })
         } catch (error) {
             console.warn(error.message);
@@ -79,6 +87,8 @@ const adminStore = create((set) => ({
                 },
                 body: JSON.stringify(data)
             });
+            await new Promise(resolve => setTimeout(resolve, 200));
+
             set({ isTestimonialAddedLoading: false });
         } catch (error) {
             console.error(error.message);
@@ -95,6 +105,8 @@ const adminStore = create((set) => ({
                 },
                 body: JSON.stringify(data)
             });
+            await new Promise(resolve => setTimeout(resolve, 200));
+
             set({ isUploadSection: false });
         } catch (error) {
             console.error(error.message);
@@ -121,7 +133,7 @@ const adminStore = create((set) => ({
                 },
                 body: JSON.stringify(data)
             });
-            new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, 200));
             set({ addTutorialLoader: false });
         } catch (error) {
             console.error(error.message);
@@ -147,7 +159,7 @@ const adminStore = create((set) => ({
                 },
                 body: JSON.stringify(data)
             });
-            new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, 200));
             set({ addChapterLoader: false });
         } catch (error) {
             console.error(error.message);
@@ -173,6 +185,65 @@ const adminStore = create((set) => ({
             });
         } catch (error) {
             console.error(error.message);
+        }
+    },
+    addCourse: async (data) => {
+        set({ addCourseLoader: true });
+        try {
+            const response = await fetch(`${BACKEND_API_URL}/addCourse`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            await new Promise(resolve => setTimeout(resolve, 200));
+            set({ addCourseLoader: false });
+        } catch (error) {
+            console.error(error.message);
+        }
+    },
+    getAllCourses: async (id) => {
+        try {
+            const response = await fetch(`${BACKEND_API_URL}/getCourses/${id}`);
+            const result = await response.json();
+            set({ courses: result.courses });
+        } catch (error) {
+            console.error(error.message);
+        }
+    },
+    addUpcomingBatch:async (data) => {
+        set({ addUpcomingBatchLoader: true });
+        try {
+            const response = await fetch(`${BACKEND_API_URL}/addUpcomingBatch`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            set({ addUpcomingBatchLoader: false });
+        } catch (error) {
+            console.error(error.message);
+            set({ addUpcomingBatchLoader: false });
+        }
+    },
+    addCourseTopic: async (data) => {
+        set({ addCourseTopicLoader: true });
+        try {
+            const response = await fetch(`${BACKEND_API_URL}/addTopic`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            set({ addCourseTopicLoader: false });
+        } catch (error) {
+            console.error(error.message);
+            set({ addUpcomingBatchLoader: false });
         }
     }
 }));

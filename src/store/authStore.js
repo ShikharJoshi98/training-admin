@@ -4,7 +4,7 @@ export const AUTH_BACKEND_URL = `${import.meta.env.VITE_BACKEND_URL}/api/admin-a
 
 const authStore = create((set) => ({
     isInstituteRegistered: "",
-    isAuthenticated: false,
+    isAuthenticated: true,
     isLoading: false,
     isCheckingAuth: false,
     institute: null,
