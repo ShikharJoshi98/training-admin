@@ -1,21 +1,26 @@
 import { useEffect, useState } from "react";
 import Input from "../components/Input";
 import SubmitButton from "../components/SubmitButton";
-import AddCurriculumModal from "../components/AddCurriculumModal";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { CiCirclePlus } from "react-icons/ci";
 import adminStore from "../store/adminStore";
 import authStore from "../store/authStore";
 import { LuTrash } from "react-icons/lu";
 import AddTopicModal from "../components/AddTopicModal";
+import AddSubTopicModal from "../components/AddSubTopicModal";
 
 const Courses = () => {
   const addCourse = adminStore((state) => state.addCourse);
   const addCourseLoader = adminStore((state) => state.addCourseLoader);
   const courses = adminStore((state) => state.courses);
   const getAllCourses = adminStore((state) => state.getAllCourses);
+  const getTutorialTopic = adminStore((state) => state.getTutorialTopic);
+  const courseTopics = adminStore((state) => state.courseTopics);
   const addUpcomingBatch = adminStore((state) => state.addUpcomingBatch);
   const addUpcomingBatchLoader = adminStore((state) => state.addUpcomingBatchLoader);
+  const addTopicSubmit = adminStore((state) => state.addTopicSubmit);
+  const addSubTopicSubmit = adminStore((state) => state.addSubTopicSubmit);
+  const selectTopCourse = adminStore((state) => state.selectTopCourse);
+  const selectTopCourseLoader = adminStore((state) => state.selectTopCourseLoader);
   const institute = authStore((state) => state.institute);
   const [formValues, setFormValues] = useState({
     course: "",
@@ -33,11 +38,16 @@ const Courses = () => {
     classDays: ""
   })
   const [addTopicModal, setAddTopicModal] = useState(false);
+  const [addSubTopicModal, setAddSubTopicModal] = useState(false);
+  const [topicId, setTopicId] = useState('');
+  const [courseId, setCourseId] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
+  const [submit, setSubmit] = useState(false);
 
   useEffect(() => {
     getAllCourses(institute?.id);
-  }, [getAllCourses])
+    getTutorialTopic(institute?.id);
+  }, [getAllCourses, getTutorialTopic, addTopicSubmit, addSubTopicSubmit, submit])
 
   const handleCheckboxChange = (course) => {
     if (selectedCourses.includes(course)) {
@@ -45,12 +55,11 @@ const Courses = () => {
     } else if (selectedCourses.length < 3) {
       setSelectedCourses([...selectedCourses, course]);
     }
-
   };
-  const handleSelectCourseSubmit = (e) => {
+  const handleSelectCourseSubmit = async (e) => {
     try {
       e.preventDefault();
-      console.log(selectedCourses)
+      await selectTopCourse(institute?.id, { courseIds: selectedCourses });
     } catch (error) {
       console.warn(error.message);
     }
@@ -74,6 +83,7 @@ const Courses = () => {
     try {
       e.preventDefault();
       await addCourse({ ...formValues, instituteId: institute?.id });
+      setSubmit(prev => !prev);
       setFormValues({
         course: "",
         courseDuration: "",
@@ -109,7 +119,6 @@ const Courses = () => {
       }));
     }
   };
-
   const handleUpcomingBatchChange = (e) => {
     const { name, value } = e.target;
     setUpcomingBatchFormValues((prev) => ({
@@ -117,6 +126,7 @@ const Courses = () => {
       [name]: value
     }));
   };
+
   return (
     <div className='p-0 sm:p-8 text-white'>
       <h1 className='text-3xl mt-10 sm:mt-0 font-semibold text-center'>Courses Added</h1>
@@ -131,20 +141,20 @@ const Courses = () => {
                 <button className='bg-red-700/70 rounded-md border border-white/40 cursor-pointer p-2'><LuTrash /></button>
               </div>
             </div>
-            <h3 className="pl-5">Course Curriculum</h3>
-            {/* {
-              tutorialChapters.filter((chapter) => chapter?.tutorialId === tutorial?.id).map((chapter, index) => (
+            <h3 className="text-center font-semibold">Course Curriculum</h3>
+            {
+              courseTopics.filter((topic, _) => topic?.courseId === course?.id).map((topic, index) => (
                 <div key={index} className="mt-4 text-gray-200">
-                  <p className="pl-5 font-semibold">{chapter?.chapter}<button onClick={() => { setAddSubChapterModal(true); setChapterId(chapter?.id) }} className="bg-sky-700 text-white p-2 ml-2 cursor-pointer rounded-full text-sm">Add Subchapter</button></p>
+                  <p className="pl-5 font-semibold">{topic?.topic}<button onClick={() => { setAddSubTopicModal(true); setTopicId(topic?.id) }} className="bg-sky-700 text-white p-2 ml-2 cursor-pointer rounded-full text-sm">Add Subtopic</button></p>
                   {
-                    chapter?.subChapter.map((item, subIndex) => (
-                      <p key={subIndex} className="pl-10 text-sm mt-1">{subIndex + 1}. {item} <button className="bg-blue-400 text-white cursor-pointer py-0.5 px-3 rounded-full">Add Documentation</button></p>
+                    topic?.subTopic.map((item, subIndex) => (
+                      <p key={subIndex} className="pl-10 text-sm mt-1">{subIndex + 1}. {item}</p>
                     ))
                   }
                 </div>
               ))
-            } */}
-            <button onClick={() => { setAddTopicModal(true) }} className="bg-green-600 mx-auto mt-8 text-white cursor-pointer flex items-center gap-3 py-2 pl-3 pr-1 font-semibold rounded-full">Add Topic<CiCirclePlus size={20} /></button>
+            }
+            <button onClick={() => { setAddTopicModal(true); setCourseId(course?.id) }} className="bg-green-600 mx-auto mt-8 text-white cursor-pointer flex items-center gap-3 py-2 pl-3 pr-1 font-semibold rounded-full">Add Topic<CiCirclePlus size={20} /></button>
           </div>
         ))}
       </div>
@@ -153,11 +163,11 @@ const Courses = () => {
       <div className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
         {courses.map((course, index) => (
           <label key={index} className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" value={course?.course} checked={selectedCourses.includes(course?.course)} onChange={() => handleCheckboxChange(course?.course)} disabled={!selectedCourses.includes(course?.course) && selectedCourses.length >= 3} className="accent-gray-300" />
+            <input type="checkbox" value={course?.id} checked={selectedCourses.includes(course?.id)} onChange={() => handleCheckboxChange(course?.id)} disabled={!selectedCourses.includes(course?.id) && selectedCourses.length >= 3} className="accent-gray-300" />
             <span>{course?.course}</span>
           </label>
         ))}
-        {selectedCourses.length >= 3 && <SubmitButton onClick={handleSelectCourseSubmit} text="Courses Selected" />}
+        {selectedCourses.length >= 3 && <SubmitButton isLoading={selectTopCourseLoader} onClick={handleSelectCourseSubmit} text="Courses Selected" />}
       </div>
       <h1 className='text-3xl mt-10 font-semibold text-center'>Add Upcoming Batches</h1>
       <form onSubmit={handleUpcomingBatchSubmit} className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
@@ -198,7 +208,8 @@ const Courses = () => {
         </div>
         <SubmitButton isLoading={addCourseLoader} text="Submit" />
       </form>
-      {addTopicModal && <AddTopicModal onClose={() => setAddTopicModal(false)} />}
+      {addTopicModal && <AddTopicModal courseId={courseId} onClose={() => setAddTopicModal(false)} />}
+      {addSubTopicModal && <AddSubTopicModal topicId={topicId} onClose={() => setAddSubTopicModal(false)} />}
     </div>
   )
 }

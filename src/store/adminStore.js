@@ -9,7 +9,8 @@ const adminStore = create((set) => ({
     tutorialSections: [],
     tutorials: [],
     tutorialChapters: [],
-    courses:[],
+    courses: [],
+    courseTopics: [],
     isUpdateLoading: false,
     isAddSocialLinkLoading: false,
     isTestimonialAddedLoading: false,
@@ -18,11 +19,17 @@ const adminStore = create((set) => ({
     addChapterLoader: false,
     addCourseLoader: false,
     addChapterSubmit: false,
+    addTopicSubmit: false,
     addSubChapterSubmit: false,
+    addSubTopicSubmit: false,
     addUpcomingBatchLoader: false,
-    addCourseTopicLoader:false,
+    addCourseTopicLoader: false,
+    addSubTopicLoader: false,
+    selectTopCourseLoader: false,
     setAddChapterSubmit: () => set((state) => ({ addChapterSubmit: !state.addChapterSubmit })),
     setAddSubChapterSubmit: () => set((state) => ({ addSubChapterSubmit: !state.addSubChapterSubmit })),
+    setAddTopicSubmit: () => set((state) => ({ addTopicSubmit: !state.addTopicSubmit })),
+    setAddSubTopicSubmit: () => set((state) => ({ addSubTopicSubmit: !state.addSubTopicSubmit })),
     getInstituteData: async (id) => {
         try {
             const response = await fetch(`${BACKEND_API_URL}/getInstituteInfo/${id}`);
@@ -212,7 +219,7 @@ const adminStore = create((set) => ({
             console.error(error.message);
         }
     },
-    addUpcomingBatch:async (data) => {
+    addUpcomingBatch: async (data) => {
         set({ addUpcomingBatchLoader: true });
         try {
             const response = await fetch(`${BACKEND_API_URL}/addUpcomingBatch`, {
@@ -232,6 +239,7 @@ const adminStore = create((set) => ({
     addCourseTopic: async (data) => {
         set({ addCourseTopicLoader: true });
         try {
+            console.log(data);
             const response = await fetch(`${BACKEND_API_URL}/addTopic`, {
                 method: 'POST',
                 headers: {
@@ -244,6 +252,49 @@ const adminStore = create((set) => ({
         } catch (error) {
             console.error(error.message);
             set({ addUpcomingBatchLoader: false });
+        }
+    },
+    getTutorialTopic: async (instituteId) => {
+        try {
+            const response = await fetch(`${BACKEND_API_URL}/getTopicInfo/${instituteId}`);
+            const result = await response.json();
+            set({ courseTopics: result.topicInfo });
+        } catch (error) {
+            console.error(error.message);
+        }
+    },
+    addSubTopic: async (id, data) => {
+        set({ addSubTopicLoader: true });
+        try {
+            const response = await fetch(`${BACKEND_API_URL}/addSubTopic/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            set({ addSubTopicLoader: false });
+        } catch (error) {
+            console.error(error.message);
+            set({ addSubTopicLoader: false });
+        }
+    },
+    selectTopCourse: async (id, courseIds) => {
+        set({ selectTopCourseLoader: true });
+        try {
+            const response = await fetch(`${BACKEND_API_URL}/selectTopCourse/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ courseIds })
+            });
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            set({ selectTopCourseLoader: false });
+        } catch (error) {
+            console.error(error.message);
+            set({ selectTopCourseLoader: false });
         }
     }
 }));
