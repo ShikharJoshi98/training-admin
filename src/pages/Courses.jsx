@@ -4,9 +4,10 @@ import SubmitButton from "../components/SubmitButton";
 import { CiCirclePlus } from "react-icons/ci";
 import adminStore from "../store/adminStore";
 import authStore from "../store/authStore";
-import { LuTrash } from "react-icons/lu";
 import AddTopicModal from "../components/AddTopicModal";
 import AddSubTopicModal from "../components/AddSubTopicModal";
+import { useLocation } from "react-router-dom";
+import { FaRegPenToSquare, FaTrash } from "react-icons/fa6";
 
 const Courses = () => {
   const addCourse = adminStore((state) => state.addCourse);
@@ -21,6 +22,10 @@ const Courses = () => {
   const addSubTopicSubmit = adminStore((state) => state.addSubTopicSubmit);
   const selectTopCourse = adminStore((state) => state.selectTopCourse);
   const selectTopCourseLoader = adminStore((state) => state.selectTopCourseLoader);
+  const editTopic = adminStore((state) => state.editTopic);
+  const deleteTopic = adminStore((state) => state.deleteTopic);
+  const editSubTopic = adminStore((state) => state.editSubTopic);
+  const deleteSubTopic = adminStore((state) => state.deleteSubTopic);
   const institute = authStore((state) => state.institute);
   const [formValues, setFormValues] = useState({
     course: "",
@@ -43,11 +48,25 @@ const Courses = () => {
   const [courseId, setCourseId] = useState('');
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [submit, setSubmit] = useState(false);
+  const location = useLocation();
+  const [editingTopicId, setEditingTopicId] = useState(null);
+  const [editingTopicValue, setEditingTopicValue] = useState("");
+  const [editingSubTopicId, setEditingSubTopicId] = useState(null);
+  const [editingSubTopicValue, setEditingSubTopicValue] = useState("");
 
   useEffect(() => {
     getAllCourses(institute?.id);
     getTutorialTopic(institute?.id);
   }, [getAllCourses, getTutorialTopic, addTopicSubmit, addSubTopicSubmit, submit])
+
+  useEffect(() => {
+    if (location.hash) {
+      const el = document.getElementById(location.hash.replace("#", ""));
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location]);
 
   const handleCheckboxChange = (course) => {
     if (selectedCourses.includes(course)) {
@@ -96,6 +115,14 @@ const Courses = () => {
       console.error(error.message);
     }
   }
+  const editTopicName = async (id, data) => {
+    try {
+      await editTopic(id, data);
+      setSubmit(prev => !prev);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -137,18 +164,47 @@ const Courses = () => {
               <div className="flex flex-col sm:flex-row sm:items-start items-center gap-4">
                 <p className="font-semibold text-lg">{course?.course}</p>
               </div>
-              <div className="flex items-center gap-3 mt-3">
-                <button className='bg-red-700/70 rounded-md border border-white/40 cursor-pointer p-2'><LuTrash /></button>
-              </div>
             </div>
             <h3 className="text-center font-semibold">Course Curriculum</h3>
             {
               courseTopics.filter((topic, _) => topic?.courseId === course?.id).map((topic, index) => (
                 <div key={index} className="mt-4 text-gray-200">
-                  <p className="pl-5 font-semibold">{topic?.topic}<button onClick={() => { setAddSubTopicModal(true); setTopicId(topic?.id) }} className="bg-sky-700 text-white p-2 ml-2 cursor-pointer rounded-full text-sm">Add Subtopic</button></p>
+                  {editingTopicId === topic?.id ? (
+                    <div className="pl-5 flex items-center gap-2">
+                      <input type="text" value={editingTopicValue} onChange={(e) => setEditingTopicValue(e.target.value)} className="bg-black/40 rounded-md border text-white px-2 py-1" />
+                      <button onClick={() => { editTopicName(topic?.id, { newTopic: editingTopicValue }); setEditingTopicId(null); }} className="bg-green-600 px-3 py-1 rounded-md">Save</button>
+                      <button onClick={() => setEditingTopicId(null)} className="bg-gray-600 px-3 py-1 rounded-md">Cancel</button>
+                    </div>
+                  ) : (
+                    <p className="pl-5 font-semibold">
+                      {topic?.topic}
+                      <button onClick={() => { setAddSubTopicModal(true); setTopicId(topic?.id) }} className="bg-sky-700 text-white p-2 ml-2 cursor-pointer rounded-full text-sm">Add Subtopic</button>
+                      <button onClick={() => { setEditingTopicId(topic?.id); setEditingTopicValue(topic?.topic); }} className="ml-2 cursor-pointer">
+                        <FaRegPenToSquare />
+                      </button>
+                      <button onClick={async () => { await deleteTopic(topic?.id); setSubmit(prev => !prev) }} className="ml-2 text-red-500 cursor-pointer">
+                        <FaTrash />
+                      </button>
+                    </p>
+                  )}
                   {
                     topic?.subTopic.map((item, subIndex) => (
-                      <p key={subIndex} className="pl-10 text-sm mt-1">{subIndex + 1}. {item}</p>
+                      <div key={subIndex} className="pl-10 text-sm mt-1 flex items-center gap-2">
+                        {editingSubTopicId === `${topic?.id}-${subIndex}` ? (
+                          <>
+                            <input type="text" value={editingSubTopicValue} onChange={(e) => setEditingSubTopicValue(e.target.value)} className="bg-black/40 rounded-md border text-white px-2 py-1" />
+                            <button onClick={() => { editSubTopic(topic?.id, { index: subIndex, data: editingSubTopicValue }); setSubmit(prev => !prev); setEditingSubTopicId(null); }} className="bg-green-600 px-3 py-1 rounded-md">Save</button>
+                            <button onClick={() => setEditingSubTopicId(null)} className="bg-gray-600 px-3 py-1 rounded-md">Cancel</button>
+                          </>
+                        ) : (
+                          <>
+                            {subIndex + 1}. {item}
+                            <button onClick={() => { setEditingSubTopicId(`${topic?.id}-${subIndex}`); setEditingSubTopicValue(item); }} className="ml-2 cursor-pointer"><FaRegPenToSquare /></button>
+                            <button onClick={() => { deleteSubTopic(topic?.id, { index: subIndex }); setSubmit(prev => !prev) }} className="ml-2 text-red-500 cursor-pointer"><FaTrash /></button>
+                          </>
+                        )}
+                      </div>
+
                     ))
                   }
                 </div>
@@ -169,7 +225,7 @@ const Courses = () => {
         ))}
         {selectedCourses.length >= 3 && <SubmitButton isLoading={selectTopCourseLoader} onClick={handleSelectCourseSubmit} text="Courses Selected" />}
       </div>
-      <h1 className='text-3xl mt-10 font-semibold text-center'>Add Upcoming Batches</h1>
+      <h1 id="UpcomingBatches" className='text-3xl mt-10 font-semibold text-center'>Add Upcoming Batches</h1>
       <form onSubmit={handleUpcomingBatchSubmit} className="bg-white/10 py-8 px-10 sm:px-20 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
         <div className="flex flex-col gap-2">
           <p>Select Course</p>
@@ -210,7 +266,7 @@ const Courses = () => {
       </form>
       {addTopicModal && <AddTopicModal courseId={courseId} onClose={() => setAddTopicModal(false)} />}
       {addSubTopicModal && <AddSubTopicModal topicId={topicId} onClose={() => setAddSubTopicModal(false)} />}
-    </div>
+    </div >
   )
 }
 

@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import authStore from "./store/authStore";
 import { useEffect } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
+import Users from "./pages/Users";
 
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = authStore((state) => state.isAuthenticated);
@@ -59,6 +60,7 @@ function App() {
           <Route path="Testimonials" element={<ProtectedRoute><Testimonials /></ProtectedRoute>} />
           <Route path="TrainingInfo" element={<ProtectedRoute><TrainingInfo /></ProtectedRoute>} />
           <Route path="Tutorials" element={<ProtectedRoute><Tutorials /></ProtectedRoute>} />
+          <Route path="Users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

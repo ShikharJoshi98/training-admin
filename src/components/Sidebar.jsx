@@ -22,7 +22,7 @@ const Sidebar = () => {
                     <li onClick={() => { navigate('Tutorials') }} className={`${active === "/dashboard/Tutorials" ? 'bg-slate-600 font-semibold' : 'hover:bg-slate-700'} flex items-center gap-2 cursor-pointer p-1 rounded-md`}><FaChalkboardTeacher />Tutorials</li>
                     <li onClick={() => { navigate('Testimonials') }} className={`${active === "/dashboard/Testimonials" ? 'bg-slate-600 font-semibold' : 'hover:bg-slate-700'} cursor-pointer flex items-center gap-2 p-1 rounded-md`}><FaUsers />Testimonials</li>
                     <li onClick={() => { navigate('TrainingInfo') }} className={`${active === "/dashboard/TrainingInfo" ? 'bg-slate-600 font-semibold' : 'hover:bg-slate-700'} items-center gap-2 flex cursor-pointer p-1 rounded-md`}><LuBadgeInfo />Institute</li>
-                    <li onClick={() => { navigate('TrainingInfo') }} className={`${active === "/" ? 'bg-slate-600 font-semibold' : 'hover:bg-slate-700'} items-center gap-2 flex cursor-pointer p-1 rounded-md`}><LuUsers />Users</li>
+                    <li onClick={() => { navigate('Users') }} className={`${active === "/dashboard/Users" ? 'bg-slate-600 font-semibold' : 'hover:bg-slate-700'} items-center gap-2 flex cursor-pointer p-1 rounded-md`}><LuUsers />Users</li>
                 </ul>
             </aside>
         </div>

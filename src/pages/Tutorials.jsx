@@ -7,6 +7,8 @@ import authStore from "../store/authStore";
 import { CiCirclePlus } from "react-icons/ci";
 import AddChapterModal from "../components/AddChapterModal";
 import AddSubChapterModal from "../components/AddSubChapterModal";
+import { useLocation } from "react-router-dom";
+import { FaRegPenToSquare, FaTrash } from "react-icons/fa6";
 
 const Tutorials = () => {
   const getTutorialSections = adminStore((state) => state.getTutorialSections);
@@ -19,7 +21,14 @@ const Tutorials = () => {
   const tutorialChapters = adminStore((state) => state.tutorialChapters);
   const addChapterSubmit = adminStore((state) => state.addChapterSubmit);
   const addSubChapterSubmit = adminStore((state) => state.addSubChapterSubmit);
+  const deleteChapter = adminStore((state) => state.deleteChapter);
+  const editChapter = adminStore((state) => state.editChapter);
+  const deleteSubChapter = adminStore((state) => state.deleteSubChapter);
+  const updateSubChapterName = adminStore((state) => state.updateSubChapterName);
+
   const institute = authStore((state) => state.institute);
+  const location = useLocation();
+
   const [formValues, setFormValues] = useState({
     section: "",
     tutorialName: "",
@@ -31,6 +40,12 @@ const Tutorials = () => {
   const [addSubChapterModal, setAddSubChapterModal] = useState(false);
   const [isChapterId, setChapterId] = useState(null);
   const [tutorialSubmit, setTutorialSubmit] = useState(false);
+
+  const [editingChapterId, setEditingChapterId] = useState(null);
+  const [editingChapterValue, setEditingChapterValue] = useState("");
+  const [editingSubChapterId, setEditingSubChapterId] = useState(null);
+  const [editingSubChapterValue, setEditingSubChapterValue] = useState("");
+
 
   useEffect(() => {
     getTutorialSections(institute?.id);
@@ -44,9 +59,18 @@ const Tutorials = () => {
       getTutorialChapter,
       tutorialSubmit,
       addChapterSubmit,
-      addSubChapterSubmit
+      addSubChapterSubmit,
     ]
   );
+
+  useEffect(() => {
+    if (location.hash) {
+      const el = document.getElementById(location.hash.replace("#", ""));
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location]);
 
   const handleSubmit = async (e) => {
     try {
@@ -86,6 +110,7 @@ const Tutorials = () => {
       }));
     }
   }
+  console.log(tutorialChapters)
 
   return (
     <div className='p-0 pb-10 sm:p-8'>
@@ -109,9 +134,10 @@ const Tutorials = () => {
         <Input label="Tutorial Logo" required name="tutorialImage" onChange={handleInputChange} type="file" />
         <SubmitButton text="Submit" />
       </form>
+
       <h1 className='text-3xl text-white mt-10 font-semibold text-center'>Tutorials Added</h1>
       {tutorials.map((tutorial, index) => (
-        <div key={index} className="bg-white/10 py-8 px-5 md:px-10 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
+        <div id={`tutorials-${tutorial?.tutorialName?.replace(/\s+/g, '-').toLowerCase()}`} key={index} className="bg-white/10 py-8 px-5 md:px-10 shadow-md rounded-md flex flex-col gap-4 w-[95vw] sm:w-[90%] max-w-[900px] mx-auto mt-10">
           <div className='border bg-white/10 pb-4 shadow-md border-white/10 rounded-2xl'>
             <div className="flex flex-col sm:flex-row p-4 items-center sm:justify-between gap-10">
               <div className="flex flex-col sm:flex-row sm:items-start items-center gap-4">
@@ -123,19 +149,55 @@ const Tutorials = () => {
             {
               tutorialChapters.filter((chapter) => chapter?.tutorialId === tutorial?.id).map((chapter, index) => (
                 <div key={index} className="mt-4 text-gray-200">
-                  <p className="pl-5 font-semibold">{chapter?.chapter}<button onClick={() => { setAddSubChapterModal(true); setChapterId(chapter?.id) }} className="bg-sky-700 text-white p-2 ml-2 cursor-pointer rounded-full text-sm">Add Subchapter</button></p>
+                  {editingChapterId === chapter?.id ? (
+                    <div className="pl-5 flex items-center gap-2">
+                      <input type="text" value={chapterEditValue} onChange={(e) => setChapterEditValue(e.target.value)} className="bg-black/40 rounded-md border text-white px-2 py-1" />
+                      <button onClick={async () => { await editChapter(chapter?.id, { newChapter: chapterEditValue }); setTutorialSubmit(prev => !prev); setEditingChapterId(null); }} className="bg-green-600 px-3 py-1 rounded-md">Save</button>
+                      <button onClick={() => setEditingChapterId(null)} className="bg-gray-600 px-3 py-1 rounded-md">Cancel</button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <p className="pl-5 font-semibold">
+                        {chapter?.chapter}
+                        <button onClick={() => { setAddSubChapterModal(true); setChapterId(chapter?.id) }} className="bg-sky-700 text-white p-2 ml-2 cursor-pointer rounded-full text-sm">Add Subchapter</button>
+                      </p>
+                      <button className="ml-2 cursor-pointer" onClick={() => { setEditingChapterId(chapter.id); setChapterEditValue(chapter.chapter); }}><FaRegPenToSquare /></button>
+                      <button onClick={async () => { await deleteChapter(chapter?.id); setTutorialSubmit(prev => !prev) }} className="ml-2 text-red-500 cursor-pointer"><FaTrash /></button>
+                    </div>
+                  )}
                   {
                     chapter?.subChapter.map((item, subIndex) => (
-                      <p key={subIndex} className="pl-10 text-sm mt-1">{subIndex + 1}. {item} <button className="bg-blue-400 text-white cursor-pointer py-0.5 px-3 rounded-full">Add Documentation</button></p>
+                      <div key={subIndex} className="pl-10 text-sm mt-1 flex items-center gap-2">
+                        {editingSubChapterId === `${item?.id}-${subIndex}` ? (
+                          <>
+                            <input type="text" value={editingSubChapterValue} onChange={(e) => setEditingChapterValue(e.target.value)} className="bg-black/40 rounded-md border text-white px-2 py-1" />
+                            <button onClick={() => { setEditingSubChapterId(null); }} className="bg-green-600 px-3 py-1 rounded-md">Save</button>
+                            <button onClick={() => setEditingSubChapterId(null)} className="bg-gray-600 px-3 py-1 rounded-md">Cancel</button>
+                          </>
+                        ) : (
+                          <>
+                            {subIndex + 1}. {item}
+                            <button onClick={() => { setEditingSubChapterId(`${chapter?.id}-${subIndex}`); setEditingSubChapterValue(item); }} className="ml-2 cursor-pointer"><FaRegPenToSquare /></button>
+                            <button onClick={() => { deleteSubChapter(chapter?.id, { index: subIndex }); setTutorialSubmit(prev => !prev) }} className="ml-2 text-red-500 cursor-pointer"><FaTrash /></button>
+                          </>
+                        )}
+                      </div>
+
                     ))
                   }
                 </div>
               ))
             }
-            <button onClick={() => { setAddChapterModal(true); setTutorialId(tutorial?.id) }} className="bg-green-600 mx-auto mt-4 text-white cursor-pointer flex items-center gap-3 py-2 pl-3 pr-1 font-semibold rounded-full">Add Chapter<CiCirclePlus size={20} /></button>
+            <button
+              onClick={() => { setAddChapterModal(true); setTutorialId(tutorial?.id) }}
+              className="bg-green-600 mx-auto mt-4 text-white cursor-pointer flex items-center gap-3 py-2 pl-3 pr-1 font-semibold rounded-full"
+            >
+              Add Chapter<CiCirclePlus size={20} />
+            </button>
           </div>
         </div>
       ))}
+
       {addChapterModal && <AddChapterModal onClose={() => setAddChapterModal(false)} tutorialid={isTutorialId} />}
       {addSectionModal && <AddSectionModal onClose={() => setAddSectionModal(false)} />}
       {addSubChapterModal && <AddSubChapterModal onClose={() => setAddSubChapterModal(false)} chapterId={isChapterId} />}
